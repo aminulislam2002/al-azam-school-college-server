@@ -50,6 +50,32 @@ async function run() {
       res.send(result);
     });
 
+    // Make admin from teacher
+    app.patch("/users/makeAdmin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "admin",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    // Remove admin as teacher
+    app.patch("/users/removeAdmin/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          role: "teacher",
+        },
+      };
+      const result = await usersCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     // Delete any user
     app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
