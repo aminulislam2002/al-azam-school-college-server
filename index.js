@@ -34,6 +34,14 @@ async function run() {
       res.send(result);
     });
 
+    // Get all students
+    app.get("/users/students", async (req, res) => {
+      const query = { role: "student" };
+      const students = usersCollection.find(query);
+      const result = await students.toArray();
+      res.send(result);
+    });
+
     // Delete any user
     app.delete("/users/:id", async (req, res) => {
       const id = req.params.id;
