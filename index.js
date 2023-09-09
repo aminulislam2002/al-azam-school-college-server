@@ -27,6 +27,14 @@ async function run() {
     const database = client.db("instituteDB");
     const usersCollection = database.collection("users");
 
+    // Get current login user by email
+    app.get("/user/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
     // Get all users
     app.get("/users", async (req, res) => {
       const cursor = usersCollection.find();
