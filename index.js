@@ -27,6 +27,13 @@ async function run() {
     const database = client.db("instituteDB");
     const usersCollection = database.collection("users");
 
+    // Get all users
+    app.get("/users", async (req, res) => {
+      const cursor = usersCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // Post and user
     app.post("/users", async (req, res) => {
       const user = req.body;
