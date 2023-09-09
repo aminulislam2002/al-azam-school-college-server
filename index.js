@@ -34,6 +34,14 @@ async function run() {
       res.send(result);
     });
 
+    // Get only all teachers
+    app.get("/users/teachers", async (req, res) => {
+      const query = { role: "teacher" };
+      const teachers = usersCollection.find(query);
+      const result = await teachers.toArray();
+      res.send(result);
+    });
+
     // Get all students
     app.get("/users/students", async (req, res) => {
       const query = { role: "student" };
