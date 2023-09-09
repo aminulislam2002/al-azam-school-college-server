@@ -58,6 +58,33 @@ async function run() {
       res.send(result);
     });
 
+    // Get admin user
+    app.get("/users/admin/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const result = { admin: user?.role === "admin" };
+      res.send(result);
+    });
+
+    // Get teacher user
+    app.get("/users/teacher/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const result = { teacher: user?.role === "teacher" };
+      res.send(result);
+    });
+
+    // Get student user
+    app.get("/users/student/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      const result = { student: user?.role === "student" };
+      res.send(result);
+    });
+
     // Make admin from teacher
     app.patch("/users/makeAdmin/:id", async (req, res) => {
       const id = req.params.id;
