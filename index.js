@@ -26,6 +26,7 @@ async function run() {
 
     const database = client.db("instituteDB");
     const usersCollection = database.collection("users");
+    const noticesCollection = database.collection("notices");
 
     // Get an user by user id
     app.get("/getUserById/:id", async (req, res) => {
@@ -101,6 +102,21 @@ async function run() {
       res.send(result);
     });
 
+    // Get a notice
+    app.get("/getNoticeById/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await noticesCollection.findOne(filter);
+      res.send(result);
+    });
+
+    // Get all notices
+    app.get("/getAllNotices", async (req, res) => {
+      const cursor = noticesCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+
     // Update student user data
     app.patch("/userUpdate/:id", async (req, res) => {
       const id = req.params.id;
@@ -142,11 +158,33 @@ async function run() {
       res.send(result);
     });
 
+    // Update a notice
+    app.patch("/noticeUpdate/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const updateNotice = req.body;
+      const updateDoc = {
+        $set: {
+          ...updateNotice,
+        },
+      };
+      const result = await noticesCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     // Delete any user
     app.delete("/deleteUser/:id", async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) };
       const result = await usersCollection.deleteOne(query);
+      res.send(result);
+    });
+
+    // Delete a notice
+    app.delete("/deleteNotice/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await noticesCollection.deleteOne(query);
       res.send(result);
     });
 
@@ -159,6 +197,13 @@ async function run() {
         return res.send({ message: "user already exists" });
       }
       const result = await usersCollection.insertOne(user);
+      res.send(result);
+    });
+
+    // Post a notice
+    app.post("/postNotices", async (req, res) => {
+      const notice = req.body;
+      const result = await noticesCollection.insertOne(notice);
       res.send(result);
     });
 
