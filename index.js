@@ -118,6 +118,12 @@ async function run() {
       res.send(result);
     });
 
+    // Get only all applications
+    app.get("/getAllApplication", async (req, res) => {
+      const result = await applicationsCollection.find().toArray();
+      res.send(result);
+    });
+
     // Update student user data
     app.patch("/userUpdate/:id", async (req, res) => {
       const id = req.params.id;
@@ -208,7 +214,7 @@ async function run() {
       res.send(result);
     });
 
-    // Post a notice
+    // Post a application
     app.post("/postApplication", async (req, res) => {
       const notice = req.body;
       const result = await applicationsCollection.insertOne(notice);
