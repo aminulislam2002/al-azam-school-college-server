@@ -187,6 +187,14 @@ async function run() {
       res.send(result);
     });
 
+    // Delete any user
+    app.delete("/deleteApplication/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await applicationsCollection.deleteOne(query);
+      res.send(result);
+    });
+
     // Delete a notice
     app.delete("/deleteNotice/:id", async (req, res) => {
       const id = req.params.id;
