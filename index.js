@@ -27,6 +27,7 @@ async function run() {
     const database = client.db("instituteDB");
     const usersCollection = database.collection("users");
     const noticesCollection = database.collection("notices");
+    const applicationsCollection = database.collection("applications");
 
     // Get an user by user id
     app.get("/getUserById/:id", async (req, res) => {
@@ -204,6 +205,13 @@ async function run() {
     app.post("/postNotices", async (req, res) => {
       const notice = req.body;
       const result = await noticesCollection.insertOne(notice);
+      res.send(result);
+    });
+
+    // Post a notice
+    app.post("/postApplication", async (req, res) => {
+      const notice = req.body;
+      const result = await applicationsCollection.insertOne(notice);
       res.send(result);
     });
 
