@@ -179,6 +179,19 @@ async function run() {
       res.send(result);
     });
 
+    app.patch("/applicationStatusUpdate/:id", async (req, res) => {
+      const id = req.params.id;
+      const { status } = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = {
+        $set: {
+          status: status,
+        },
+      };
+      const result = await applicationsCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
     // Delete any user
     app.delete("/deleteUser/:id", async (req, res) => {
       const id = req.params.id;
