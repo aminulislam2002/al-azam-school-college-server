@@ -153,6 +153,14 @@ async function run() {
       res.send(result);
     });
 
+    // Get a notice by id
+    app.get("/getNoticeById", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const result = await noticesCollection.findOne(filter);
+      res.send(result);
+    });
+
     // Get only all applications
     app.get("/getAllApplication", verifyJWT, verifyAdmin, async (req, res) => {
       const result = await applicationsCollection.find().toArray();
