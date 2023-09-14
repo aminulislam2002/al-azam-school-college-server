@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 const app = express();
 const port = process.env.PORT || 5000;
@@ -19,6 +20,23 @@ const client = new MongoClient(uri, {
   },
 });
 
+const verifyJWT = (req, res, next) => {
+  const authorization = req.headers.authorization;
+  if (!authorization) {
+    return res.status(401).json({ error: true, message: "Unauthorized access" });
+  }
+
+  const token = authorization.split(" ")[1];
+
+  jwt.verify(token, process.env.ACCESS_TOKEN, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ error: true, message: "Unauthorized access" });
+    }
+    req.decoded = decoded;
+    next();
+  });
+};
+
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -28,6 +46,23 @@ async function run() {
     const usersCollection = database.collection("users");
     const noticesCollection = database.collection("notices");
     const applicationsCollection = database.collection("applications");
+
+    const verifyAdmin = async (req, res, next) => {
+      const email = req.decoded.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      if (user?.role !== "admin") {
+        return res.status(403).send({ error: true, message: "forbidden message" });
+      }
+      next();
+    };
+
+    // jwt
+    app.post("/jwt", (req, res) => {
+      const user = req.body;
+      const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: "24h" });
+      res.send({ token });
+    });
 
     // Get an user by user id
     app.get("/getUserById/:id", async (req, res) => {
@@ -53,7 +88,7 @@ async function run() {
     });
 
     // Get only all admins
-    app.get("/getAllAdmins", async (req, res) => {
+    app.get("/getAllAdmins", verifyJWT, verifyAdmin, async (req, res) => {
       const query = { role: "admin" };
       const admins = usersCollection.find(query);
       const result = await admins.toArray();
@@ -61,7 +96,7 @@ async function run() {
     });
 
     // Get only all teachers
-    app.get("/getAllTeachers", async (req, res) => {
+    app.get("/getAllTeachers", verifyJWT, verifyAdmin, async (req, res) => {
       const query = { role: "teacher" };
       const teachers = usersCollection.find(query);
       const result = await teachers.toArray();
@@ -69,7 +104,7 @@ async function run() {
     });
 
     // Get all students
-    app.get("/getAllStudents", async (req, res) => {
+    app.get("/getAllStudents", verifyJWT, verifyAdmin, async (req, res) => {
       const query = { role: "student" };
       const students = await usersCollection.find(query).toArray();
       // console.log(students);
@@ -119,7 +154,7 @@ async function run() {
     });
 
     // Get only all applications
-    app.get("/getAllApplication", async (req, res) => {
+    app.get("/getAllApplication", verifyJWT, verifyAdmin, async (req, res) => {
       const result = await applicationsCollection.find().toArray();
       res.send(result);
     });
