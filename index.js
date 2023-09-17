@@ -168,6 +168,12 @@ async function run() {
       res.send(result);
     });
 
+    // Get only all results
+    app.get("/getAllResults", async (req, res) => {
+      const result = await resultsCollection.find().toArray();
+      res.send(result);
+    });
+
     // Update student user data
     app.patch("/userUpdate/:id", async (req, res) => {
       const id = req.params.id;
