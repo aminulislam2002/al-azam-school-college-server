@@ -46,6 +46,7 @@ async function run() {
     const usersCollection = database.collection("users");
     const noticesCollection = database.collection("notices");
     const applicationsCollection = database.collection("applications");
+    const resultsCollection = database.collection("results");
 
     const verifyAdmin = async (req, res, next) => {
       const email = req.decoded.email;
@@ -282,6 +283,13 @@ async function run() {
     app.post("/postApplication", async (req, res) => {
       const notice = req.body;
       const result = await applicationsCollection.insertOne(notice);
+      res.send(result);
+    });
+
+    // Post a result
+    app.post("/postResult", async (req, res) => {
+      const notice = req.body;
+      const result = await resultsCollection.insertOne(notice);
       res.send(result);
     });
 
