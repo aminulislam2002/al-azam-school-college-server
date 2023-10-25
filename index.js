@@ -174,6 +174,27 @@ async function run() {
       res.send(result);
     });
 
+    // Define a route to get results based on roll, class, and passingYear
+    // app.get("/getAllResults", async (req, res) => {
+    //   const { roll, class: studentClass, passingYear } = req.body;
+
+    //   if (!roll || !studentClass || !passingYear) {
+    //     return res.send.status(404).json({ error: "Information is invalid" });
+    //   }
+
+    //   const student = await resultsCollection.findOne({
+    //     roll: parseInt(roll),
+    //     studentClass: parseInt(studentClass),
+    //     passingYear: parseInt(passingYear),
+    //   });
+
+    //   if (!student) {
+    //     return res.send.status(404).json({ error: "Information is invalid" });
+    //   }
+
+    //   res.json(student);
+    // });
+
     // Update student user data
     app.patch("/userUpdate/:id", async (req, res) => {
       const id = req.params.id;
